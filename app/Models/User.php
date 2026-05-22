@@ -5,15 +5,15 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasUuids, Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -32,15 +32,9 @@ class User extends Authenticatable implements FilamentUser
         return true;
     }
 
-    protected static function boot()
+    public function uniqueIds(): array
     {
-        parent::boot();
-
-        static::creating(function ($user) {
-            if (empty($user->uuid)) {
-                $user->uuid = Str::uuid();
-            }
-        });
+        return ['uuid'];
     }
 
     public function getRouteKeyName(): string
