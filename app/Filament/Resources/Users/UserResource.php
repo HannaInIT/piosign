@@ -32,6 +32,11 @@ class UserResource extends Resource
         return UsersTable::configure($table);
     }
 
+    public static function getRecordRouteKeyName(): ?string
+    {
+        return 'uuid';
+    }
+
     public static function getRelations(): array
     {
         return [
