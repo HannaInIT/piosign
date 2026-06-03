@@ -58,9 +58,6 @@ class EmployeesTable
                     }),
             ])
             ->defaultSort('created_at', 'desc')
-            ->filters([
-                //
-            ])
             ->recordActions([
                 EditAction::make()
                     ->iconButton(),

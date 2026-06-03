@@ -37,13 +37,6 @@ class UserResource extends Resource
         return 'uuid';
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [

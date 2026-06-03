@@ -9,13 +9,6 @@ class EditEmployee extends EditRecord
 {
     protected static string $resource = EmployeeResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public function getHeading(): string
     {
         return 'Edit employee';
