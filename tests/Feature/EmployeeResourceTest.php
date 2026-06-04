@@ -6,7 +6,6 @@ use App\Filament\Resources\Employees\Pages\EditEmployee;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Vite;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -20,7 +19,7 @@ class EmployeeResourceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Vite::spy();
+        $this->withoutVite();
         $this->admin = User::factory()->create();
     }
 
