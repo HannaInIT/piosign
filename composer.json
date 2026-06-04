@@ -1,9 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "pionect/signature",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Manage the signature of Gmail users in bulk",
     "license": "MIT",
     "require": {
         "php": "^8.3",
