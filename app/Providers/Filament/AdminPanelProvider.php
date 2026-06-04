@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/logo_piosign.svg'))
             ->brandLogoHeight('2.5rem')
             ->favicon(asset('images/favicon.svg'))
-            ->when(! app()->environment('testing'), fn ($panel) => $panel->viteTheme('resources/css/filament/admin/theme.css'))
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => '#383174',
             ])

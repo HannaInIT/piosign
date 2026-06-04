@@ -6,6 +6,7 @@ use App\Filament\Resources\Employees\Pages\EditEmployee;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Vite;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -19,6 +20,7 @@ class EmployeeResourceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Vite::spy();
         $this->admin = User::factory()->create();
     }
 
@@ -66,7 +68,6 @@ class EmployeeResourceTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('employees', [
-            // 'id' => $employee->id,
             'uuid' => $employee->uuid,
             'job_title' => 'Senior developer',
             'department' => 'Dev',
