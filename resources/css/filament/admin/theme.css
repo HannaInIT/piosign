@@ -1,0 +1,10 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+.fi-header-subheading {
+    color: var(--color-primary-400);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
