@@ -22,12 +22,12 @@ class EmployeeForm
                         Section::make('Edit employee information')
                             ->schema([
                                 TextInput::make('job_title')
-                                    ->live(),
+                                    ->live(onBlur: true),
                                 TextInput::make('department')
-                                    ->live(),
+                                    ->live(onBlur: true),
                                 TextInput::make('phone_number')
                                     ->tel()
-                                    ->live(),
+                                    ->live(onBlur: true),
                             ]),
                         Section::make('Employee info')
                             ->description('Synced from Google Workspace')
