@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->unsavedChangesAlerts()
             ->brandName('PioSign')
             ->brandLogo(asset('images/logo_piosign.svg'))
             ->brandLogoHeight('2.5rem')

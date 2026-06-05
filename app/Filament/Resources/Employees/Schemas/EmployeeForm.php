@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 
 class EmployeeForm
@@ -15,17 +16,18 @@ class EmployeeForm
         return $schema
             ->columns(2)
             ->components([
-                // left column - employee info + editable fields
                 Grid::make(1)
                     ->columnSpan(1)
                     ->schema([
-
-                        Section::make('Editable fields')
+                        Section::make('Edit employee information')
                             ->schema([
+                                TextInput::make('job_title')
+                                    ->live(),
+                                TextInput::make('department')
+                                    ->live(),
                                 TextInput::make('phone_number')
-                                    ->tel(),
-                                TextInput::make('job_title'),
-                                TextInput::make('department'),
+                                    ->tel()
+                                    ->live(),
                             ]),
                         Section::make('Employee info')
                             ->description('Synced from Google Workspace')
@@ -56,8 +58,7 @@ class EmployeeForm
                             ]),
                     ]),
 
-                // right section - signature
-                Section::make('Signature')
+                Section::make('Signature preview')
                     ->columnSpan(1)
                     ->extraAlpineAttributes(['class' => 'signature-sticky'])
                     ->headerActions([
@@ -82,7 +83,7 @@ class EmployeeForm
                             ->disabled(),
                     ])
                     ->schema([
-                        // signature preview
+                        View::make('components.signature'),
                     ]),
             ]);
     }
