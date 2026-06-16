@@ -14,8 +14,17 @@ class EditEmployee extends EditRecord
         return 'Edit employee';
     }
 
-    public function getSubheading(): ?string
+    public function getBreadcrumb(): string
     {
         return $this->record->first_name.' '.$this->record->last_name;
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            EmployeeResource::getUrl() => 'Employees',
+            $this->record->full_name => $this->record->full_name,
+            'Edit',
+        ];
     }
 }
