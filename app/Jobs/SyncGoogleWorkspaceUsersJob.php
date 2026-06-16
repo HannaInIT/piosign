@@ -19,6 +19,13 @@ class SyncGoogleWorkspaceUsersJob implements ShouldQueue
 
         $googleIds = [];
         foreach ($users as $user) {
+            if ($user['suspended'] || $user['archived']) {
+                Employee::withTrashed()
+                    ->where('google_id', $user['google_id'])
+                    ->delete();
+
+                continue;
+            }
             $employee = Employee::withTrashed()
                 ->firstOrNew(['google_id' => $user['google_id']]);
 
