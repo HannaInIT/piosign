@@ -2,48 +2,60 @@
 
 namespace App\Services;
 
-use Exception;
-use Google\Client;
 use Google\Service\Directory;
+use Google\Service\Directory\User;
 use Illuminate\Support\Collection;
 
 class GoogleDirectoryService
 {
-    private Directory $directoryService;
-
-    public function __construct(Client $client)
-    {
-        $client->setScopes([Directory::ADMIN_DIRECTORY_USER_READONLY]);
-
-        $this->directoryService = new Directory($client);
-    }
+    public function __construct(private Directory $directoryService) {}
 
     public function listUsers(): Collection
     {
-        try {
-            $pageToken = null;
-            $allUsersArray = [];
+        $rawUsers = $this->fetchAllUsers();
 
-            do {
-                $response = $this->directoryService->users->listUsers([
-                    'domain' => config('services.google.domain'),
-                    'pageToken' => $pageToken,
-                ]);
+        return $this->filterActiveUsers($rawUsers)
+            ->map(fn (User $user) => $this->mapUser($user));
+    }
 
-                $users = $response->getUsers() ?? [];
+    private function fetchAllUsers(): Collection
+    {
+        $allUsers = collect();
+        $pageToken = null;
 
-                foreach ($users as $user) {
-                    $allUsersArray[] = $user;
-                }
+        do {
+            $response = $this->fetchPage($pageToken);
+            $allUsers = $allUsers->merge($response->getUsers() ?? []);
+            $pageToken = $response->getNextPageToken();
+        } while ($pageToken);
 
-                $pageToken = $response->getNextPageToken();
-            } while ($pageToken);
+        return $allUsers;
+    }
 
-            return collect($allUsersArray);
-        } catch (Exception $exception) {
-            report($exception);
+    private function fetchPage(?string $pageToken): Directory\Users
+    {
+        return $this->directoryService->users->listUsers([
+            'domain' => config('services.google.domain'),
+            'pageToken' => $pageToken,
+        ]);
+    }
 
-            return collect();
-        }
+    private function filterActiveUsers(Collection $users): Collection
+    {
+        return $users
+            ->filter(fn (User $user) => ! $user->getSuspended() && ! $user->getArchived())
+            ->values();
+    }
+
+    private function mapUser(User $user): array
+    {
+        return [
+            'google_id' => $user->getId(),
+            'email' => $user->getPrimaryEmail(),
+            'first_name' => $user->getName()->getGivenName(),
+            'last_name' => $user->getName()->getFamilyName(),
+            'suspended' => $user->getSuspended(),
+            'archived' => $user->getArchived(),
+        ];
     }
 }

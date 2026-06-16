@@ -2,41 +2,23 @@
 
 namespace App\Services;
 
-use Exception;
-use Google\Client;
-use Google\Service\Gmail;
+use Closure;
+use Google\Service\Gmail\SendAs;
 
 class GoogleGmailService
 {
-    private Client $client;
+    private Closure $gmailFactory;
 
-    public function __construct(Client $client)
+    public function __construct()
     {
-        $client->setScopes([Gmail::GMAIL_SETTINGS_BASIC]);
-        $this->client = $client;
+        $this->gmailFactory = app('google-gmail-factory');
     }
 
-    public function updateUserSignature(string $userEmail, string $signatureHtml): bool
+    public function updateUserSignature(string $userEmail, string $signatureHtml): void
     {
-        try {
-            $gmailClient = clone $this->client;
-            $gmailClient->setSubject($userEmail);
-
-            $service = new Gmail($gmailClient);
-            $signature = new Gmail\SendAs;
-            $signature->setSignature($signatureHtml);
-
-            $service->users_settings_sendAs->patch(
-                $userEmail,
-                $userEmail,
-                $signature
-            );
-
-            return true;
-        } catch (Exception $exception) {
-            report($exception);
-
-            return false;
-        }
+        $gmailService = ($this->gmailFactory)($userEmail);
+        $sendAs = new SendAs;
+        $sendAs->setSignature($signatureHtml);
+        $gmailService->users_settings_sendAs->patch($userEmail, $userEmail, $sendAs);
     }
 }
