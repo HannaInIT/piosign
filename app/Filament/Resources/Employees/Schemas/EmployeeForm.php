@@ -19,7 +19,7 @@ class EmployeeForm
                 Grid::make(1)
                     ->columnSpan(1)
                     ->schema([
-                        Section::make('Edit employee information')
+                        Section::make('Signature details')
                             ->schema([
                                 TextInput::make('job_title')
                                     ->live(onBlur: true),
