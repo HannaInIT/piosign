@@ -17,32 +17,20 @@ class SyncGoogleWorkspaceUsersJob implements ShouldQueue
     {
         $users = $googleDirectoryService->listUsers();
 
-        $googleIds = [];
-        foreach ($users as $user) {
-            if ($user['suspended'] || $user['archived']) {
-                Employee::withTrashed()
-                    ->where('google_id', $user['google_id'])
-                    ->delete();
+        $allGoogleIds = $users->pluck('google_id');
 
-                continue;
-            }
-            $employee = Employee::withTrashed()
-                ->firstOrNew(['google_id' => $user['google_id']]);
-
-            if ($employee->trashed()) {
-                $employee->restore();
-            }
-
-            $employee->fill([
-                'first_name' => $user['first_name'],
-                'last_name' => $user['last_name'],
-                'email' => $user['email'],
-            ])->save();
-
-            $googleIds[] = $employee->google_id;
-
+        $upsertData = $users->map(fn (array $user) => [
+            'google_id' => $user['google_id'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
+            'email' => $user['email'],
+            'deleted_at' => null,
+        ])->toArray();
+        if (! empty($upsertData)) {
+            Employee::withTrashed()->upsert($upsertData, ['google_id'], ['first_name', 'last_name', 'email', 'deleted_at']);
         }
-        Employee::whereNotIn('google_id', $googleIds)->delete();
+
+        Employee::whereNull('deleted_at')->whereNotIn('google_id', $allGoogleIds)->delete();
 
         Notification::make()
             ->title('Sync successful')
@@ -53,6 +41,9 @@ class SyncGoogleWorkspaceUsersJob implements ShouldQueue
 
     public function failed(Throwable $exception): void
     {
+
+        report($exception);
+
         Notification::make()
             ->title('Sync failed')
             ->body('Google Workspace users could not be synced.')

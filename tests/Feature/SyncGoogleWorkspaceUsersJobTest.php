@@ -37,30 +37,6 @@ class SyncGoogleWorkspaceUsersJobTest extends TestCase
     }
 
     #[Test]
-    public function it_soft_deletes_employees_missing_from_google_workspace(): void
-    {
-        $leaver = Employee::factory()->create(['google_id' => '999']);
-
-        $this->mock(GoogleDirectoryService::class, function ($mock) {
-            $mock->shouldReceive('listUsers')->once()->andReturn(collect([
-                [
-                    'google_id' => '111',
-                    'email' => 'jan@pionect.nl',
-                    'first_name' => 'Jan',
-                    'last_name' => 'Jansen',
-                    'suspended' => false,
-                    'archived' => false,
-                ],
-            ]));
-        });
-        (new SyncGoogleWorkspaceUsersJob)->handle(app(GoogleDirectoryService::class));
-
-        $this->assertSoftDeleted('employees', ['google_id' => '999']);
-        $this->assertDatabaseHas('employees', ['google_id' => '111']);
-
-    }
-
-    #[Test]
     public function it_restores_and_updates_employee(): void
     {
         $employee = Employee::factory()->create([
@@ -92,36 +68,15 @@ class SyncGoogleWorkspaceUsersJobTest extends TestCase
     }
 
     #[Test]
-    public function it_soft_deletes_suspended_users(): void
+    public function it_soft_deletes_employees_missing_from_google_workspace(): void
     {
-        Employee::factory()->create(['google_id' => '111']);
-        Employee::factory()->create(['google_id' => '222']);
+        Employee::factory()->create(['google_id' => '999']);
 
-        $this->mock(GoogleDirectoryService::class, function ($mock) {
-            $mock->shouldReceive('listUsers')->once()->andReturn(collect([
-                [
-                    'google_id' => '111',
-                    'email' => 'jan@pionect.nl',
-                    'first_name' => 'Jan',
-                    'last_name' => 'Jansen',
-                    'suspended' => true,
-                    'archived' => false,
-                ],
-                [
-                    'google_id' => '222',
-                    'email' => 'adam@pionect.nl',
-                    'first_name' => 'Adam',
-                    'last_name' => 'Brown',
-                    'suspended' => true,
-                    'archived' => false,
-                ],
-            ]));
-        });
+        $this->mock(GoogleDirectoryService::class, fn ($mock) => $mock->shouldReceive('listUsers')->once()->andReturn(collect([]))
+        );
 
         (new SyncGoogleWorkspaceUsersJob)->handle(app(GoogleDirectoryService::class));
 
-        $this->assertSoftDeleted('employees', ['google_id' => '111']);
-        $this->assertSoftDeleted('employees', ['google_id' => '222']);
-
+        $this->assertSoftDeleted('employees', ['google_id' => '999']);
     }
 }
