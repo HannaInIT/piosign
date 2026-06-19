@@ -3,12 +3,13 @@
 namespace App\Filament\Resources\Employees\Tables;
 
 use App\Enums\SyncStatus;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Jobs\SyncSignatureJob;
+use Filament\Actions\BulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EmployeesTable
 {
@@ -63,10 +64,16 @@ class EmployeesTable
                     ->iconButton(),
 
             ])
+
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkAction::make('syncSignature')
+                    ->label('Sync signature to Gmail')
+                    ->icon('heroicon-o-rocket-launch')
+                    ->action(function (Collection $records) {
+                        foreach ($records as $employee) {
+                            SyncSignatureJob::dispatch($employee);
+                        }
+                    }),
             ]);
     }
 }
