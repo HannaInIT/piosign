@@ -6,11 +6,7 @@
     $lastName = $data['last_name'] ?? $employee?->last_name;
     $jobTitle = $data['job_title'] ?? $employee?->job_title;
     $department = $data['department'] ?? $employee?->department;
-    $phoneNumber = $data['phone_number'] ?? $employee?->phone_number;
-
-    $logo = base64_encode(file_get_contents(public_path('images/signature/logo-img.png')));
-    $iconWeb = base64_encode(file_get_contents(public_path('images/signature/icon-web.png')));
-    $iconLinkedin = base64_encode(file_get_contents(public_path('images/signature/icon-linkedin.png')));
+    $phoneNumber = $data['phone_number'] ?? $employee?->phone_number;   
 @endphp
 
 <p 
@@ -33,7 +29,7 @@
         <tr>
             <td style="vertical-align: top; padding-right: 10px;">
                 <img 
-                src="data:image/png;base64,{{$logo}}"
+                src="{{ asset('images/signature/logo-img.png') }}"
                 alt="Pionect"
                 width="85"
                 height="85"
@@ -88,7 +84,7 @@
                             <td style="padding-right: 4px;">
                                 <a href="https://www.pionect.com/">
                                     <img
-                                    src="data:image/png;base64,{{$iconWeb}}"
+                                    src="{{ asset('images/signature/icon-web.png') }}"
                                     alt="Website"
                                     width="25"
                                     height="25"
@@ -100,7 +96,7 @@
                             <td>
                                 <a href="https://www.linkedin.com/company/pionect/posts/?feedView=all">
                                     <img
-                                    src="data:image/png;base64,{{$iconLinkedin}}"
+                                    src="{{ asset('images/signature/icon-linkedin.png') }}"
                                     alt="Linkedin"
                                     width="25"
                                     height="25"
