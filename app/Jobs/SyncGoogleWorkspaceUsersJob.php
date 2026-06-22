@@ -7,6 +7,7 @@ use App\Services\GoogleDirectoryService;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class SyncGoogleWorkspaceUsersJob implements ShouldQueue
@@ -31,6 +32,8 @@ class SyncGoogleWorkspaceUsersJob implements ShouldQueue
         }
 
         Employee::whereNull('deleted_at')->whereNotIn('google_id', $allGoogleIds)->delete();
+
+        Log::info("Synced {$users->count()} employees from Google Workspace.");
 
         Notification::make()
             ->title('Sync successful')
