@@ -32,7 +32,7 @@ class EditEmployee extends EditRecord
                 ->label('Sync signature to Gmail')
                 ->icon('heroicon-o-rocket-launch')
                 ->action(function () {
-                    SyncSignatureJob::dispatch($this->record);
+                    dispatch_sync(new SyncSignatureJob($this->record));
                 }),
         ];
     }

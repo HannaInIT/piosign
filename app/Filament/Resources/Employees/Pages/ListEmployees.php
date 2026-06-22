@@ -19,7 +19,7 @@ class ListEmployees extends ListRecords
                 ->label('Sync from Google Workspace')
                 ->icon('heroicon-o-arrow-path')
                 ->action(function () {
-                    SyncGoogleWorkspaceUsersJob::dispatch();
+                    dispatch_sync(new SyncGoogleWorkspaceUsersJob);
                 }),
         ];
     }
