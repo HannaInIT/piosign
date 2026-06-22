@@ -6,30 +6,30 @@
     $lastName = $data['last_name'] ?? $employee?->last_name;
     $jobTitle = $data['job_title'] ?? $employee?->job_title;
     $department = $data['department'] ?? $employee?->department;
-    $phoneNumber = $data['phone_number'] ?? $employee?->phone_number;   
+    $phoneNumber = $data['phone_number'] ?? $employee?->phone_number;
 @endphp
 
-<p 
-    style="font-family: Arial, Helvetica, sans-serif; 
-    font-size: 13px; 
-    color: #222222; 
+<p
+    style="font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #222222;
     margin: 0 0 20px 0; ">
         Met vriendelijke groet,
 </p>
 
-<table 
-    cellspacing="0" 
+<table
+    cellspacing="0"
     cellpadding="0" 
-    style="font-family: Arial, Helvetica, sans-serif; 
-    font-size: 13px; 
-    color: #000000; 
-    line-height: 1.2; 
+    style="font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #000000;
+    line-height: 1.2;
     background: transparent;">
     <tbody>
         <tr>
             <td style="vertical-align: top; padding-right: 10px;">
-                <img 
-                src="{{ asset('images/signature/logo-img.png') }}"
+                <img
+                src="https://framerusercontent.com/images/0x0E4XpyflyiJ7cg7YZj1AU.png?width=200&height=200"
                 alt="Pionect"
                 width="85"
                 height="85"
@@ -42,18 +42,18 @@
                     <strong style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; color: #222222;">
                         {{$firstName}} {{$lastName}}
                     </strong>
-                </p>             
+                </p>
                      
                 @if($jobTitle)
                 <p style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: bold; margin: 0 0 2px 0; color: #98A3A4;">
                     {{$jobTitle}}
-                </p> 
-                @endif         
+                </p>
+                @endif
 
                 @if($department)
                 <p style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 0 0 2px 0; color: #15112D;">
                     {{ $department }}
-                </p>  
+                </p>
                 @endif
 
                 @if(!$jobTitle || !$department || !$phoneNumber)
@@ -67,8 +67,8 @@
                 @if($phoneNumber)
                 <p style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 0 0 2px 0; color: #98A3A4;">
                     {{$phoneNumber}}
-                </p>   
-                @endif                   
+                </p>
+                @endif
 
                 <p style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 0 0 2px 0; color: #98A3A4;">
                     0103400308
@@ -84,7 +84,7 @@
                             <td style="padding-right: 4px;">
                                 <a href="https://www.pionect.com/">
                                     <img
-                                    src="{{ asset('images/signature/icon-web.png') }}"
+                                    src="https://framerusercontent.com/images/6wnPWSkiZgfjDNuzxrWaDTowJg.png?width=60&height=60"
                                     alt="Website"
                                     width="25"
                                     height="25"
@@ -96,11 +96,11 @@
                             <td>
                                 <a href="https://www.linkedin.com/company/pionect/posts/?feedView=all">
                                     <img
-                                    src="{{ asset('images/signature/icon-linkedin.png') }}"
+                                    src="https://framerusercontent.com/images/RpKbRaJ5nHbv8Y9hMQxVwlaQOc.png?width=60&height=60"
                                     alt="Linkedin"
                                     width="25"
                                     height="25"
-                                    style="width: 25px; height: 25px; display: block;"                                    
+                                    style="width: 25px; height: 25px; display: block;"
                                     />
                                 </a>
                             </td>
