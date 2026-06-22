@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Employees\Schemas;
 
+use App\Enums\SyncStatus;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -22,12 +23,15 @@ class EmployeeForm
                         Section::make('Signature details')
                             ->schema([
                                 TextInput::make('job_title')
-                                    ->live(onBlur: true),
+                                    ->live(debounce: 500),
+
                                 TextInput::make('department')
-                                    ->live(onBlur: true),
+                                    ->live(debounce: 500),
+
                                 TextInput::make('phone_number')
                                     ->tel()
-                                    ->live(onBlur: true),
+                                    ->live(debounce: 500),
+
                             ]),
                         Section::make('Employee info')
                             ->description('Synced from Google Workspace')
@@ -72,6 +76,10 @@ class EmployeeForm
                             ->label(function ($record) {
                                 if (! $record?->signature_last_synced_at) {
                                     return 'Never synced';
+                                }
+
+                                if ($record?->signature_sync_status === SyncStatus::Failed) {
+                                    return '-';
                                 }
 
                                 $date = $record->signature_last_synced_at->setTimezone('Europe/Amsterdam');
