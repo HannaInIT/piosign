@@ -1,58 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PioSign
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+PioSign is a production application for managing company-wide Gmail signatures. It connects to Google Workspace so administrators can maintain employee details and apply a consistent, professional signature across the organisation.
 
-## About Laravel
+The company previously relied on a ready-to-use external solution to manage employee signatures. PioSign replaces that dependency with an internally owned solution tailored to the company's workflow, giving the company full control over signature data, templates and synchronisation.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+An administrator can synchronise the Workspace directory, edit an employee's signature details, and push the rendered signature to Gmail on the employee's behalf. This keeps signatures consistent while still allowing employee-specific information such as names, roles, contact details, and other approved content.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+![](/public/images/screenshots/edit_employee.png)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+As a CRM system, PioSign also provides visibility into signature synchronisation. Administrators can see the current sync status for each employee and when their signature was last synchronised, making it easier to identify and resolve signatures that need attention.
 
-## Learning Laravel
+![](/public/images/screenshots/Employees_table.png)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+This is the expected result: the employee’s signature is successfully attached to their Gmail account.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+![The expected result](/public/images/screenshots/expected_result.png)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Features
 
-## Agentic Development
+- Import and maintain employees from a Google Workspace directory.
+- Manage employee signature details from an administrative panel.
+- Render signatures as HTML using the application's signature template.
+- Synchronise an individual employee's signature to Gmail.
+- Dispatch a bulk signature synchronisation for all active employees.
+- Track each employee's signature sync status and last synchronisation time.
+- Soft-delete Workspace users who are no longer returned by the directory.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Technology
+
+- PHP 8.3+
+- Laravel 13
+- Filament 5
+- MySQL (default production database)
+- Google API Client for Workspace Directory and Gmail integration
+- Vite and Tailwind CSS for frontend assets
+
+## Requirements
+
+- PHP 8.3 or newer with the extensions required by the application.
+- Composer.
+- Node.js and npm.
+- MySQL or another database supported by Laravel.
+- A Google Workspace domain and a Google Cloud service account configured for domain-wide delegation.
+
+## Installation
+
+Clone the repository and install the application dependencies:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <repository-url> piosign
+cd piosign
+composer install
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Create the environment file and application key:
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Configure the database and Google Workspace values in `.env`, then run the migrations:
 
-## Code of Conduct
+```bash
+php artisan migrate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Build the frontend assets:
 
-## Security Vulnerabilities
+```bash
+npm run build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The complete setup sequence is also available through Composer:
+
+```bash
+composer run setup
+```
+
+## Google Workspace setup
+
+PioSign requires server-to-server access to Google Workspace. Before running a production instance:
+
+1. Create or select a project in [Google Cloud](https://console.cloud.google.com/).
+2. Enable the Admin SDK API and Gmail API.
+3. Create a service account and download its JSON credentials securely.
+4. Enable domain-wide delegation for the service account.
+5. In the Google Workspace Admin console, grant the service account the scopes required by the directory and Gmail operations.
+6. Set the Google configuration values in `.env`:
+
+```dotenv
+GOOGLE_APPLICATION_CREDENTIALS=/secure/path/google-service-account.json
+GOOGLE_WORKSPACE_ADMIN_EMAIL=admin@example.com
+GOOGLE_WORKSPACE_DOMAIN=example.com
+```
+
+The credentials file should be stored outside the public web root, readable only by the application user and excluded from version control. Never commit service-account credentials or real production environment files.
+
+## Configuration
+
+The important application settings are defined in `.env.example`:
+
+| Variable                         | Purpose                                               |
+| -------------------------------- | ----------------------------------------------------- |
+| `APP_URL`                        | Public URL of the application                         |
+| `DB_*`                           | Database connection settings                          |
+| `QUEUE_CONNECTION`               | Queue backend for Workspace and Gmail sync jobs       |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Absolute path to the service-account JSON file        |
+| `GOOGLE_WORKSPACE_ADMIN_EMAIL`   | Workspace administrator used for delegated API access |
+| `GOOGLE_WORKSPACE_DOMAIN`        | Workspace domain whose users are managed              |
+
+For production, use a durable queue backend such as Redis rather than the synchronous `sync` queue driver. The queue worker must be running for directory and signature jobs to complete asynchronously.
+
+## Local development
+
+Start the application, queue worker, log viewer, and Vite development server together:
+
+```bash
+composer run dev
+```
+
+Alternatively, run the services separately:
+
+```bash
+php artisan serve
+php artisan queue:listen --tries=1 --timeout=0
+npm run dev
+```
+
+After the application starts, open the URL configured by `APP_URL` and sign in through the Filament administration panel.
+
+## Testing
+
+Run the test suite with:
+
+```bash
+composer run test
+```
+
+To run a specific test or use additional PHPUnit options:
+
+```bash
+php artisan test --filter=TestName
+```
+
+## Production deployment
+
+At minimum, a production deployment should:
+
+- Set `APP_ENV=production` and `APP_DEBUG=false`.
+- Use a secure, durable database and queue backend.
+- Run `php artisan migrate --force` during deployment.
+- Build assets with `npm run build`.
+- Run a continuously supervised queue worker, for example `php artisan queue:work`.
+- Configure the scheduler if future recurring Workspace or signature syncs are added.
+- Serve the application from the `public/` directory.
+- Protect the Google credentials file and production `.env` file through filesystem permissions and secret management.
+- Configure backups, application logging, monitoring, and queue failure alerting.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+PioSign is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

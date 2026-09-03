@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'google' => [
+        'domain' => env('GOOGLE_WORKSPACE_DOMAIN'),
+        'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+        'admin_email' => env('GOOGLE_WORKSPACE_ADMIN_EMAIL'),
+    ],
 ];
